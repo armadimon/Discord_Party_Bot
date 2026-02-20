@@ -3,11 +3,11 @@ import { JWT } from 'google-auth-library';
 
 export default async function handler(req, res) {
   try {
+    const privateKey = process.env.GOOGLE_PRIVATE_KEY ? process.env.GOOGLE_PRIVATE_KEY.split('\\n').join('\n') : '';
+    
     const serviceAccountAuth = new JWT({
       email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-      key: process.env.GOOGLE_PRIVATE_KEY.replace(/
-/g, '
-'),
+      key: privateKey,
       scopes: ['https://www.googleapis.com/auth/spreadsheets'],
     });
 
@@ -24,7 +24,7 @@ export default async function handler(req, res) {
 
     res.status(200).json(data);
   } catch (error) {
-    console.error(error);
+    console.error('Error fetching data:', error);
     res.status(500).json({ error: '데이터를 가져오는데 실패했습니다.' });
   }
 }
